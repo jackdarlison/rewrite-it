@@ -18,7 +18,6 @@ async fn main() -> anyhow::Result<()> {
         .finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
-
     let port = std::env::var("PORT")?;
 
     let hx_router = Router::new()
