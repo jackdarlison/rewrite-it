@@ -1,0 +1,22 @@
+services:
+  ollama:
+    image: ollama/ollama:0.11.7
+    container_name: ollama-serve
+    volumes:
+      - ./ollama:/root/.ollama
+    ports:
+      - "11434:11434" 
+    command: serve
+
+  web-server:
+    build:
+      context: .
+      dockerfile: dockerfile.website
+    ports:
+      - "8080:8080"
+    environment:
+      OLLAMA_URL: "http://ollama-server"
+      PORT: "8080"
+    container_name: rewrite-it
+    depends_on:
+      - ollama 
