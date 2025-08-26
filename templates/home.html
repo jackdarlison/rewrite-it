@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1 class="text-primary mx-auto flex"> Rewrite It! </h1>
+<h1 class="text-5xl text-primary mx-auto flex justify-center"> Rewrite It! </h1>
 
 <div class="flex flex-col items-center gap-6 max-w-lg mx-auto mt-10">
     <div class="w-full">
@@ -21,6 +21,10 @@
           <!-- Rewrite Button -->
           <button 
             class="btn btn-primary w-40"
+            hx-post="/hx/rewrite"
+            hx-include="#input-code,#input-select,#output-select"
+            hx-target="#output-code"
+            hx-swap="none"
           >Rewrite It!</button>
           <!-- Output Select Box -->
           <select id="output-select" name="output_select" class="select select-bordered w-40">
@@ -36,3 +40,48 @@
 </div>
 
 {% endblock content %}
+
+{% block script %}
+
+<script>
+  var inputEditor = CodeMirror.fromTextArea(document.getElementById("input-code"), {
+    lineNumbers: true,
+    mode: "javascript",
+    theme: "default"
+  });
+
+  inputEditor.on("change", function(e) {
+    e.save();
+  });
+
+  var outputEditor = CodeMirror.fromTextArea(document.getElementById("output-code"), {
+    lineNumbers: true,
+    mode: "rust",
+    theme: "default"
+  });
+
+  outputEditor.on("change", function(e) {
+    e.save();
+  });
+
+  document.body.addEventListener("htmx:afterRequest", function(evt) {
+    console.log(evt);
+    if (evt.detail.target.id === "output-code") {
+        var data = JSON.parse(evt.detail.xhr.responseText);
+        console.log(data);
+        outputEditor.setValue(data.code);
+    }
+  });
+
+  document.getElementById("input-select").addEventListener("change", function () {
+    var newLang = this.value;
+    inputEditor.setOption("mode", newLang);
+  });
+
+  document.getElementById("output-select").addEventListener("change", function () {
+    var newLang = this.value;
+    outputEditor.setOption("mode", newLang);
+  });
+</script>
+  
+{% endblock script %}

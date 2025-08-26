@@ -1,23 +1,13 @@
-use askama::Template;
-use axum::{response::{Html, IntoResponse}, routing::get, Router};
+use axum::{routing::{get, post}, Router};
 use tower_http::services::ServeDir;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
+use crate::routes::{home::home, hx::rewrite};
+
 
 mod service;
-
-#[derive(Template)]
-#[template(path = "home.html")]
-struct Home {
-
-}
-
-async fn home() -> impl IntoResponse {
-    let template = Home {};
-
-    Html(template.render().expect("err"))
-}
+mod routes;
 
 
 #[tokio::main]
@@ -31,9 +21,12 @@ async fn main() -> anyhow::Result<()> {
     let port = std::env::var("PORT")?;
     let ollama_url = std::env::var("OLLAMA_URL").unwrap_or("http://localhost".to_string());
 
+    let hx_router = Router::new()
+        .route("/rewrite", post(rewrite));
 
     let router = Router::new()
         .route("/", get(home))
+        .nest("/hx", hx_router)
         .nest_service("/static", ServeDir::new("./static"));
 
     info!("starting server on 0.0.0.0:{}", port);
