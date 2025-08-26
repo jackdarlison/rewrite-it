@@ -9,6 +9,7 @@ pub struct RewriteForm {
     input_code: String,
     input_select: String,
     output_select: String,
+    model_select: String,
 }
 
 #[derive(Serialize, Debug)]
@@ -34,7 +35,7 @@ pub async fn rewrite(Form(data): Form<RewriteForm>) -> impl IntoResponse {
         &data.input_code,
         &data.input_select,
         &data.output_select,
-        "qwen2.5-coder:0.5b"
+        &data.model_select,
     ).await;
 
     match out {

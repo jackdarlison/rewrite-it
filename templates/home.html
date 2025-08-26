@@ -6,6 +6,12 @@
 
 <h1 class="text-5xl text-primary mx-auto flex justify-center"> Rewrite It! </h1>
 
+<select id="model-select" name="model_select" class="select select-bordered w-40 flex mx-auto justify-center">
+  {% for model in models %}
+  <option value="{{ model }}">{{ model }}</option>
+  {% endfor %}
+</select>
+
 <div class="flex flex-col items-center gap-6 max-w-lg mx-auto mt-10">
     <div class="w-full">
         <textarea id="input-code" name="input_code"></textarea>
@@ -22,7 +28,7 @@
           <button 
             class="btn btn-primary w-40"
             hx-post="/hx/rewrite"
-            hx-include="#input-code,#input-select,#output-select"
+            hx-include="#input-code,#input-select,#output-select,#model-select"
             hx-target="#output-code"
             hx-swap="none"
           >Rewrite It!</button>

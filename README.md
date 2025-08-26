@@ -20,8 +20,16 @@ docker exec ollama-serve ollama pull qwen2.5-coder:0.5b
 
 This command will install a small (Less than 400mb) and code oriented model for you to use. Please feel free to install any other models you wish to run.
 
+
+
 ## Design decisions
+
+
 
 ## Improvements
 
+- Add validation to the output. Each language would need its own parser
+
 ## Assumptions
+
+T
