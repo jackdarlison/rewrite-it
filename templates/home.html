@@ -37,6 +37,10 @@
     <div class="w-full">
         <textarea id="output-code"></textarea>
     </div>
+
+    <div class="w-full">
+        <textarea id="output-explanation" class="textarea"></textarea>
+    </div>
 </div>
 
 {% endblock content %}
@@ -70,6 +74,7 @@
         var data = JSON.parse(evt.detail.xhr.responseText);
         console.log(data);
         outputEditor.setValue(data.code);
+        document.getElementById('output-explanation').value = data.explanation;
     }
   });
 
