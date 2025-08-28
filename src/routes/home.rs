@@ -1,6 +1,10 @@
 use askama::Template;
-use axum::response::{Html, IntoResponse};
-use ollama_rs::Ollama;
+use axum::{
+    extract::State,
+    response::{Html, IntoResponse},
+};
+
+use crate::{AppState, service::rewrite_service::RewriteService};
 
 #[derive(Template)]
 #[template(path = "home.html")]
@@ -8,16 +12,15 @@ struct Home {
     models: Vec<String>,
 }
 
-pub async fn home() -> impl IntoResponse {
+pub async fn home<RS: RewriteService>(State(state): State<AppState<RS>>) -> impl IntoResponse {
+    let service = state.rewrite_service.lock().await;
+    let models = service.list_available_models().await;
 
-    let ollama_url = std::env::var("OLLAMA_URL").unwrap_or("http://localhost".to_string());
-    let ollama = Ollama::new(ollama_url, 11434);
-    let models = match ollama.list_local_models().await {
-        Ok(lms) => lms.iter().map(|lm| lm.name.clone()).collect(),
-        Err(_) => return Html("Cannot find local models".to_string()),
-    };
+    if models.is_empty() {
+        return Html("<h1>Please ensure models are available!</h1>".to_string());
+    }
 
     let template = Home { models };
 
-    Html(template.render().expect("err"))
+    Html(template.render().expect("Home template should render!"))
 }

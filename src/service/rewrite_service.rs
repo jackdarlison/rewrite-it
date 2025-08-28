@@ -2,8 +2,6 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use thiserror::Error;
 
-
-
 #[derive(Error, Debug)]
 pub enum RewriteError {
     #[error("Cannot initialise model: {0}")]
@@ -14,20 +12,35 @@ pub enum RewriteError {
 
     #[error("Returned data is not structured: {0}")]
     StructuredDataError(String),
+
+    #[error("User has tried to iterate with without starting a rewrite session!")]
+    IterateWithNoRewriteError,
 }
 
 #[derive(JsonSchema, Deserialize, Debug)]
 pub struct RewriteOutput {
-    pub code: String,
+    pub rewritten_code: String,
     pub explanation: String,
 }
 
-
 pub trait RewriteService: Clone + Send + Sync + 'static {
+    /// List all available local models
+    fn list_available_models(&self) -> impl Future<Output = Vec<String>> + Send;
 
     /// Start a new rewrite
-    fn start_rewrite(&self, input: &str, from: &str, to: &str, using: &str) -> impl Future<Output = Result<RewriteOutput, RewriteError>> + Send;
+    fn start_rewrite(
+        &mut self,
+        input: &str,
+        from: &str,
+        to: &str,
+        using: &str,
+    ) -> impl Future<Output = Result<RewriteOutput, RewriteError>> + Send;
 
-    // Interate on a rewrite with history
-    // async fn iterate(&mut self, aid: &str) -> Result<RewriteOutput, RewriteError>;
+    /// Interate on a rewrite with history
+    fn iterate(
+        &mut self,
+        input: &str,
+        iterate: &str,
+        using: &str,
+    ) -> impl Future<Output = Result<RewriteOutput, RewriteError>> + Send;
 }

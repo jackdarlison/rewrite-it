@@ -14,7 +14,7 @@
 
 <div class="flex flex-col items-center gap-6 max-w-lg mx-auto mt-10">
     <div class="w-full">
-        <textarea id="input-code" name="input_code"></textarea>
+        <textarea id="input-code" name="input_code">console.log("Hello world!");</textarea>
     </div>
     
     <div class="flex flex-row items-center justify-center gap-4 w-full">
@@ -44,8 +44,17 @@
         <textarea id="output-code"></textarea>
     </div>
 
-    <div class="w-full">
-        <textarea id="output-explanation" class="textarea"></textarea>
+    <div id="output-explanation" class="w-full justify-center text-secondary"></div>
+
+    <div class="flex flex-row items-center justify-center gap-4 w-full">
+      <textarea id="iterate-text" name="iterate_text" class="textarea"></textarea>
+      <button 
+            class="btn btn-primary w-40"
+            hx-post="/hx/iterate"
+            hx-include="#input-code,#model-select,#iterate-text"
+            hx-target="#output-code"
+            hx-swap="none"
+          >Iterate!</button>
     </div>
 </div>
 
@@ -80,7 +89,7 @@
         var data = JSON.parse(evt.detail.xhr.responseText);
         console.log(data);
         outputEditor.setValue(data.code);
-        document.getElementById('output-explanation').value = data.explanation;
+        document.getElementById('output-explanation').textContent = data.explanation;
     }
   });
 
