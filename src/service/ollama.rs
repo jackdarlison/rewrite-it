@@ -32,7 +32,7 @@ impl OllamaRewriteService {
 
         let this = OllamaRewriteService {
             url: url.clone(),
-            ollama: ollama,
+            ollama,
             history: vec![],
             iterate_info: None,
         };

@@ -30,25 +30,26 @@ First compile the css using Tailwind with app.css as the input and static/main.c
 
 ## Design Decisions and Tradeoffs
 
-I decided to design a language rewriter as this seemed like the most interested challenge. It provided a good focus to develop a clean and useable UI compared to other challenges just providing text output. 
+I decided to design a language rewriter as this seemed like the most interesting challenge. It provided a good focus to develop a clean and useable UI compared to other challenges just providing text output.
 
-I chose to do this as a locally hosted Rust web application as this is something I am familiar with and could progress quickly. To keep to code clean and organised I intended to implement the Hexagonal architecture pattern for the LLM service, however ran out of time to fully do so.
+I chose to do this as a locally hosted Rust web application as this is something I am familiar with and could progress quickly. The system using DDD and Hexagonal architecture principles to keep the LLM service abstract from the rest of the code.
 
 To give the users a good experience inputing code, CodeMirror was used to create a IDE on the page. This provides syntax highlighting and a natural coding experience for users, and could be extended with multiple plugins. Each language needs its own plugins so I limited my design to three to show the concept which could be expaned upon.
 
 Ollama was used as it is a powerful way to run countless number of LLMs locally. API based LLMs were not used due to time constraints. Using Ollama allows the user to use any number of backends that they may want to install and use.
+
+LLMs work well when they can iterate on their outputs, thus to improve the functionality of the service I added an iterate button which will prompt the LLM to retry with the given user input.
 
 ## Improvements
 
 As this task had a time limit of 2 hours, if I had more time I would:
 
 - Add validation to the output. Each language would need its own parser making this a time consuming process to set up.
-- Add an iterative feedback loop allowing the user to provide prompts to continue rewriting the same piece of code. This would be implemented as a Ollama chat giving the model the history of each rewrite.
-- Add the ability to use external API LLMs models such as GPT-4o
+- Add the ability to use external API LLMs models such as GPT-4o.
 
 ## Assumptions
 
 We are presuming that:
 
 - The user has the capabilities to run the models locally. Sub 1B parameter models are suitable for most consumer laptops
-- The user onls uses the three languages implemented. More could easily be added.
+- The user only uses the three languages implemented. More could easily be added.
